@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
         ],
         currentTeamIndex: 0,
         diceResult: 0
+        diceSides: 2
     };
 
     // ================================
@@ -822,38 +823,40 @@ document.addEventListener('DOMContentLoaded', function() {
     // ИГРОВАЯ ЛОГИКА
     // ================================
     function rollDice() {
-        if (gameState.isMoving) return;
+    if (gameState.isMoving) return;
+    
+    const diceBtn = document.getElementById('dice-btn');
+    const diceResult = document.getElementById('dice-result');
+    
+    diceBtn.disabled = true;
+    diceResult.textContent = '...';
+    
+    let rolls = 0;
+    const rollInterval = setInterval(() => {
+        // Генерируем число от 1 до 3
+        diceResult.textContent = Math.floor(Math.random() * 2) + 1;
+        rolls++;
         
-        const diceBtn = document.getElementById('dice-btn');
-        const diceResult = document.getElementById('dice-result');
-        
-        diceBtn.disabled = true;
-        diceResult.textContent = '...';
-        
-        let rolls = 0;
-        const rollInterval = setInterval(() => {
-            diceResult.textContent = Math.floor(Math.random() * 6) + 1;
-            rolls++;
+        if (rolls > 10) {
+            clearInterval(rollInterval);
+            // Финальный результат от 1 до 3
+            const result = Math.floor(Math.random() * 2) + 1;
+            gameConfig.diceResult = result;
+            diceResult.textContent = result;
             
-            if (rolls > 10) {
-                clearInterval(rollInterval);
-                const result = Math.floor(Math.random() * 6) + 1;
-                gameConfig.diceResult = result;
-                diceResult.textContent = result;
-                
-                showNotification(`Выпало: ${result}! Выберите направление движения.`, 'dice');
-                diceBtn.disabled = false;
-                
-                // Включаем кнопки направления
-                document.querySelectorAll('.dir-btn').forEach(btn => {
-                    if (btn.dataset.dir) {
-                        btn.disabled = false;
-                    }
-                });
-                document.getElementById('confirm-direction').disabled = false;
-            }
-        }, 100);
-    }
+            showNotification(`Выпало: ${result}! Выберите направление движения.`, 'dice');
+            diceBtn.disabled = false;
+            
+            // Включаем кнопки направления
+            document.querySelectorAll('.dir-btn').forEach(btn => {
+                if (btn.dataset.dir) {
+                    btn.disabled = false;
+                }
+            });
+            document.getElementById('confirm-direction').disabled = false;
+        }
+    }, 100);
+}
 
     function selectDirection(direction) {
         if (gameConfig.diceResult === 0) {
@@ -1327,4 +1330,5 @@ document.addEventListener('DOMContentLoaded', function() {
     // ЗАПУСК ИГРЫ
     // ================================
     initGame();
+
 });
