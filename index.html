@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Финансовый квест: Кредитная система</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header class="game-header">
+            <h1><i class="fas fa-chart-line"></i> ФИНАНСОВЫЙ КВЕСТ</h1>
+            <p class="subtitle">Интеллектуальная игра по кредитной системе и НКО</p>
+        </header>
+
+        <div class="game-layout">
+            <!-- Панель счета и управления -->
+            <div class="score-panel">
+                <h2><i class="fas fa-trophy"></i> СЧЕТ КОМАНД</h2>
+                
+                <div class="score-cards">
+                    <div class="score-card" data-team="silver">
+                        <div class="team-header">
+                            <div class="team-color silver"></div>
+                            <h3>Серебро</h3>
+                        </div>
+                        <div class="score-value" id="score-silver">0</div>
+                        <div class="team-turn-indicator" id="turn-silver">Сейчас ходят</div>
+                    </div>
+                    
+                    <div class="score-card" data-team="oil">
+                        <div class="team-header">
+                            <div class="team-color oil"></div>
+                            <h3>Нефть</h3>
+                        </div>
+                        <div class="score-value" id="score-oil">0</div>
+                        <div class="team-turn-indicator" id="turn-oil"></div>
+                    </div>
+                    
+                    <div class="score-card" data-team="apple">
+                        <div class="team-header">
+                            <div class="team-color apple"></div>
+                            <h3>Яблоко</h3>
+                        </div>
+                        <div class="score-value" id="score-apple">0</div>
+                        <div class="team-turn-indicator" id="turn-apple"></div>
+                    </div>
+                    
+                    <div class="score-card" data-team="nemchenko">
+                        <div class="team-header">
+                            <div class="team-color nemchenko"></div>
+                            <h3>Немченко LIVE</h3>
+                        </div>
+                        <div class="score-value" id="score-nemchenko">0</div>
+                        <div class="team-turn-indicator" id="turn-nemchenko"></div>
+                    </div>
+                </div>
+                
+                <div class="game-controls">
+                    <button id="dice-btn" class="control-btn">
+                        <i class="fas fa-dice"></i> Бросить кубик
+                    </button>
+                    <button id="select-btn" class="control-btn select">
+                        <i class="fas fa-directions"></i> Выбрать направление
+                    </button>
+                    <button id="reset-btn" class="control-btn reset">
+                        <i class="fas fa-redo"></i> Новая игра
+                    </button>
+                </div>
+                
+                <div class="game-info">
+                    <h3><i class="fas fa-info-circle"></i> Правила игры</h3>
+                    <ul>
+                        <li>Бросьте кубик и выберите направление движения</li>
+                        <li>Открывайте клетки, отвечая на финансовые вопросы</li>
+                        <li>Зарабатывайте очки за правильные ответы</li>
+                        <li>Используйте бонусные клетки для получения преимуществ</li>
+                        <li>Вопросы распределены по полю детерминированно</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Игровое поле -->
+            <div class="game-board-container">
+                <div class="current-turn">
+                    <div class="turn-info">
+                        <span>Текущий ход:</span>
+                        <span id="current-team-name" class="team-name">Серебро</span>
+                    </div>
+                    <div class="dice-info">
+                        <div class="dice-result" id="dice-result"></div>
+                        <div class="moves-left" id="moves-left"></div>
+                    </div>
+                </div>
+                
+                <div class="game-board" id="game-board">
+                    <!-- Игровое поле генерируется через JavaScript -->
+                </div>
+                
+                <div class="direction-controls">
+                    <button class="dir-btn" data-dir="up"><i class="fas fa-arrow-up"></i></button>
+                    <div class="horizontal-controls">
+                        <button class="dir-btn" data-dir="left"><i class="fas fa-arrow-left"></i></button>
+                        <button class="dir-btn" id="confirm-direction">Подтвердить направление</button>
+                        <button class="dir-btn" data-dir="right"><i class="fas fa-arrow-right"></i></button>
+                    </div>
+                    <button class="dir-btn" data-dir="down"><i class="fas fa-arrow-down"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Модальное окно для вопросов -->
+        <div class="modal-overlay" id="question-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2><i class="fas fa-question-circle"></i> ФИНАНСОВЫЙ ВОПРОС</h2>
+                    <button class="close-modal" id="close-question">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="question-category" id="question-category"></div>
+                    <div class="question-text" id="question-text">
+                        Загрузка вопроса...
+                    </div>
+                    
+                    <div class="options-container" id="options-container">
+                        <!-- Варианты ответов генерируются динамически -->
+                    </div>
+                    <div class="answer-result" id="answer-result"></div>
+                </div>
+                <div class="modal-footer">
+                    <button class="answer-btn correct" id="correct-btn">
+                        <i class="fas fa-check"></i> Правильно
+                    </button>
+                    <button class="answer-btn wrong" id="wrong-btn">
+                        <i class="fas fa-times"></i> Неправильно
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Модальное окно для бонусов -->
+        <div class="modal-overlay" id="bonus-modal">
+            <div class="modal-content bonus-modal">
+                <div class="modal-header">
+                    <h2 id="bonus-title"><i class="fas fa-gift"></i> ФИНАНСОВЫЙ БОНУС!</h2>
+                    <button class="close-modal" id="close-bonus">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="bonus-icon" id="bonus-icon">
+                        <i class="fas fa-question-circle fa-4x"></i>
+                    </div>
+                    <div class="bonus-result" id="bonus-result">
+                        <!-- Результат бонуса отображается здесь -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="confirm-btn" id="confirm-bonus">
+                        <i class="fas fa-check"></i> Понятно
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Уведомление -->
+        <div class="notification" id="notification"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
